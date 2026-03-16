@@ -29,10 +29,12 @@ uploads/
 *.db
 *.sqlite
 
-# IDE
+# IDE (Eclipse, STS, etc.)
 .idea/
 .vscode/
+.metadata
 .metadata/
+**/.metadata
 **/.metadata/
 .classpath
 .project
