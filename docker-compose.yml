@@ -20,8 +20,8 @@ services:
       APP_FRONT_BASE_URL: ${APP_FRONT_BASE_URL}
       SPRING_DATA_REDIS_HOST: redis
       SPRING_DATA_REDIS_PORT: 6379
-      # JVM 16 vCPU / 64 Go : heap 24G, G1GC, pause cible 200ms (surchargeable via .env JAVA_OPTS)
-      JAVA_OPTS: ${JAVA_OPTS:--Xms2g -Xmx24g -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+UseStringDeduplication -Djava.security.egd=file:/dev/./urandom}
+      # JVM 16 vCPU / 64 Go (surchargeable via .env JAVA_OPTS)
+      JAVA_OPTS: "${JAVA_OPTS:--Xms2g -Xmx24g -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+UseStringDeduplication -Djava.security.egd=file:/dev/./urandom}"
     volumes:
       - uploads_data:/app/uploads
     depends_on:
@@ -85,7 +85,7 @@ services:
     restart: unless-stopped
     command: ["sh", "-c", 'exec cloudflared tunnel --no-autoupdate run --token "$$TUNNEL_TOKEN"']
     environment:
-      TUNNEL_TOKEN: ${CLOUDFLARED_TUNNEL_TOKEN:?CLOUDFLARED_TUNNEL_TOKEN manquant : définir dans .env pour le profile tunnel}
+      TUNNEL_TOKEN: "${CLOUDFLARED_TUNNEL_TOKEN:?Definir CLOUDFLARED_TUNNEL_TOKEN dans .env pour le profile tunnel}"
     depends_on:
       - caddy
     networks:
