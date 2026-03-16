@@ -3,9 +3,9 @@
 # En prod derrière Cloudflare, l'IP client peut etre lue via X-Forwarded-For / CF-Connecting-IP côté app
 
 :80 {
-    # API → backend Spring Boot
+    # API → backend Spring Boot (noms de conteneurs pour Podman)
     handle_path /api/* {
-        reverse_proxy backend:8085 {
+        reverse_proxy pec-backend:8085 {
             header_up Host {host}
             header_up X-Real-IP {remote_host}
             header_up X-Forwarded-For {remote_host}
@@ -15,7 +15,7 @@
 
     # Tout le reste → frontend (SPA)
     handle {
-        reverse_proxy frontend:80
+        reverse_proxy pec-frontend:80
     }
 }
 
