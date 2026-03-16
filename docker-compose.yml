@@ -1,0 +1,83 @@
+# Déploiement : backend, frontend, Redis, Caddy
+# MySQL : à lancer à part ou utiliser une base existante (voir .env)
+# Usage : cp .env.example .env && éditer .env puis docker compose up -d
+
+services:
+  backend:
+    build:
+      context: ./backend_courriers_medical_qrcode3
+      dockerfile: Dockerfile
+    image: pec-backend:latest
+    container_name: pec-backend
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: production
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      APP_PUBLIC_BASE_URL: ${APP_PUBLIC_BASE_URL}
+      APP_FRONT_BASE_URL: ${APP_FRONT_BASE_URL}
+      # Optionnel Redis (si vous ajoutez spring-boot-starter-data-redis)
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+    volumes:
+      - uploads_data:/app/uploads
+    depends_on:
+      - redis
+    networks:
+      - pec-net
+    # Caddy ne forward qu'à ce service pour /api, pas d'exposition directe
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: ${APP_FRONT_BASE_URL}/api
+    image: pec-frontend:latest
+    container_name: pec-frontend
+    restart: unless-stopped
+    networks:
+      - pec-net
+
+  redis:
+    image: redis:7-alpine
+    container_name: pec-redis
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    networks:
+      - pec-net
+    command: redis-server --appendonly yes
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: pec-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    environment:
+      DOMAIN: ${DOMAIN:-localhost}
+      BACKEND_URL: http://backend:8085
+      FRONTEND_URL: http://frontend:80
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - pec-net
+
+volumes:
+  uploads_data:
+  redis_data:
+  caddy_data:
+  caddy_config:
+
+networks:
+  pec-net:
+    driver: bridge

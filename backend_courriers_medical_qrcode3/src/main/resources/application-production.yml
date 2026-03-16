@@ -1,0 +1,48 @@
+# Profil production — serveur Ubuntu / Docker
+# Activer avec: spring.profiles.active=production
+# Variables d'environnement : APP_PUBLIC_BASE_URL, APP_FRONT_BASE_URL, SPRING_DATASOURCE_*, JWT_SECRET
+
+app:
+  public:
+    base-url: ${APP_PUBLIC_BASE_URL:https://medical.senat.cd/api}
+  front:
+    base-url: ${APP_FRONT_BASE_URL:https://medical.senat.cd}
+  upload:
+    dir: /app/uploads/photos
+
+jwt:
+  secret: ${JWT_SECRET}
+
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    hikari:
+      pool-name: PecHikariPool
+      minimum-idle: 20
+      maximum-pool-size: 50
+      idle-timeout: 300000
+      max-lifetime: 1800000
+      connection-timeout: 20000
+      connection-test-query: SELECT 1
+      leak-detection-threshold: 0
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+        jdbc:
+          batch_size: 50
+
+server:
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/plain,text/css,application/javascript
+  tomcat:
+    threads:
+      max: 200
+      min-spare: 25
+    accept-count: 100
+    connection-timeout: 20000
+    max-connections: 10000

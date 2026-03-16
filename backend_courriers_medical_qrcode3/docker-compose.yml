@@ -1,0 +1,27 @@
+# Production : backend seul (MySQL géré à part ou existant sur l'hôte).
+# Utilisation : docker-compose --env-file .env.production up -d
+
+services:
+  backend:
+    build: .
+    image: courriers-audiences:latest
+    container_name: pec-backend
+    restart: unless-stopped
+    ports:
+      - "8085:8085"
+    env_file:
+      - .env.production
+    environment:
+      SPRING_PROFILES_ACTIVE: production
+    volumes:
+      # Persistance des photos uploadées
+      - uploads_data:/app/uploads/photos
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8085/", "||", "exit", "1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+volumes:
+  uploads_data:

@@ -1,0 +1,15 @@
+# Copier en application-local.yml et remplir (ce fichier n'est pas versionné).
+# Utilisé en dev pour éviter de mettre des secrets dans application.yml.
+
+spring:
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/senat_courriers_audiences?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: root
+    password: VOTRE_MOT_DE_PASSE
+
+jwt:
+  secret: "VOTRE_CLE_BASE64_32_OCTETS"
+
+# Optionnel
+# openai:
+#   api-key: sk-...

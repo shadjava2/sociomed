@@ -1,0 +1,41 @@
+# Caddyfile — reverse proxy pour PEC (frontend + backend)
+# Variables d'environnement : DOMAIN, BACKEND_URL, FRONTEND_URL (définies dans docker-compose)
+# En prod, définir DOMAIN=medical.senat.cd (ou votre domaine)
+
+{
+    # Adresse réelle du client derrière Cloudflare
+    order realip before reverse_proxy
+}
+
+:80 {
+    # Optionnel : si vous utilisez un vrai domaine, Caddy gère le HTTPS
+    # Pour Cloudflare en proxy (orange) : souvent TLS "Full" côté Cloudflare + certificat origine
+    # Ici on écoute en HTTP ; Cloudflare peut terminer le SSL (Flexible) ou passer en HTTPS (Full + certificat sur serveur)
+
+    realip {
+        header CF-Connecting-IP
+        from 173.245.48.0/20 103.21.244.0/22 103.22.200.0/22 103.31.4.0/22 141.101.64.0/18 108.162.192.0/18 190.93.240.0/20 188.114.96.0/20 197.234.240.0/22 198.41.128.0/17 162.158.0.0/15 104.16.0.0/13 104.24.0.0/14 172.64.0.0/13 131.0.72.0/22
+    }
+
+    # API → backend Spring Boot
+    handle_path /api/* {
+        reverse_proxy backend:8085 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+
+    # Tout le reste → frontend (SPA)
+    handle {
+        reverse_proxy frontend:80
+    }
+}
+
+# Bloc HTTPS automatique (décommenter et adapter quand DOMAIN est défini)
+# $DOMAIN {
+#     realip { header CF-Connecting-IP ... }
+#     handle_path /api/* { reverse_proxy backend:8085 }
+#     handle { reverse_proxy frontend:80 }
+# }

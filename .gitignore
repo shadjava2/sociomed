@@ -1,0 +1,57 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Builds
+target/
+**/target/
+dist/
+**/dist/
+dist-ssr/
+*.jar
+!.mvn/wrapper/maven-wrapper.jar
+
+# Env & secrets
+.env
+.env.local
+.env.*.local
+*.pem
+# Override local (DB, JWT, etc.) — ne pas committer
+**/application-local.yml
+**/application-local.properties
+.env.production
+**/.env.production
+
+# Uploads & data (ne pas versionner)
+uploads/
+**/uploads/photos/
+**/annexes_upload/
+*.db
+*.sqlite
+
+# IDE
+.idea/
+.vscode/
+.metadata/
+**/.metadata/
+.classpath
+.project
+.settings/
+bin/
+out/
+*.iml
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Optional
+*.local

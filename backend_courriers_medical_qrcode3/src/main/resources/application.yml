@@ -1,0 +1,119 @@
+# ✅ Google Authenticator (TOTP)
+# ✅ Google Authenticator (TOTP)
+app:
+  2fa:
+    issuer: "SENAT-RDC"   # nom affiché dans Google Authenticator
+
+  public:
+    base-url: "http://192.168.177.247:8085"  # URL du backend (liens PDF, API verify, etc.)
+    # base-url: "https://api.medical.senat.cd"  # PROD
+
+  # URL du frontend (IP ou domaine) : utilisée dans le QR code pour la page de vérification.
+  # En qr-mode: "page", le QR contient : {front.base-url}/public/pec/{token}
+  front:
+    base-url: "http://192.168.177.247:5173"  # ex. local dev (IP:port)
+    # base-url: "https://medical.senat.cd"   # PROD (domaine)
+
+  pec:
+    # "page" → QR = URL frontend (page de vérification), selon app.front.base-url
+    # "pdf"  → QR = URL backend (téléchargement direct du PDF)
+    qr-mode: "page"
+
+  upload:
+    dir: "${user.dir}/uploads/photos"
+
+  # CORS : origines autorisées en plus des patterns par défaut (localhost, http://*:5173, etc.)
+  # Déjà inclus : http://*:5173 (ex. http://192.168.22.30:5173). Ajoute ici si besoin.
+  # cors:
+  #   allowed-origins: "http://192.168.22.30:5173"
+
+server:
+  port: 8085
+  # Compression des réponses (gzip) — moins de latence réseau
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/plain,text/css,application/javascript
+  # Timeouts adaptés aux requêtes longues (ex: génération PDF)
+  tomcat:
+    connection-timeout: 20000
+    max-http-form-post-size: 21MB
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  # Désactive JMX complètement (évite InstanceAlreadyExistsException au restart DevTools)
+  jmx:
+    enabled: false
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.admin.SpringApplicationAdminJmxAutoConfiguration
+      - org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration
+  datasource:
+    # socketTimeout (ms) : évite que les opérations longues (ex: migration Hibernate) coupent la connexion
+    # tcpKeepAlive : limite les coupures par les pare-feu/NAT sur connexions inactives
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://127.0.0.1:3306/senat_courriers_audiences?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&cachePrepStmts=true&useServerPrepStmts=true&prepStmtCacheSize=250&prepStmtCacheSqlLimit=2048&socketTimeout=60000&tcpKeepAlive=true}
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:}
+    # HikariCP — valeurs par défaut (dev / petit serveur). En production (serveur puissant), utiliser spring.profiles.active=production
+    hikari:
+      pool-name: PecHikariPool
+      register-mbeans: false  # évite InstanceAlreadyExistsException au restart DevTools
+      minimum-idle: 5
+      maximum-pool-size: 20
+      idle-timeout: 300000
+      max-lifetime: 1200000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+      leak-detection-threshold: 60000
+      initialization-fail-timeout: 60000
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        # dialect détecté automatiquement par Spring Boot (MySQL)
+        format_sql: true
+        jdbc:
+          batch_size: 25
+        order_inserts: true
+        order_updates: true
+    show-sql: false
+    open-in-view: false
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 20MB
+      max-request-size: 20MB
+  jackson:
+    default-property-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
+
+jwt:
+  # Clé Base64 de 32 octets (256 bits). À définir via JWT_SECRET (prod) ou application-local.yml (dev).
+  secret: ${JWT_SECRET:}
+  expiration-ms: 86400000   # 24h
+
+# Réduction du bruit en logs (Hikari, Hibernate JTA)
+logging:
+  level:
+    com.zaxxer.hikari: WARN
+    org.hibernate.orm.jdbc: WARN
+    org.hibernate.orm.deprecation: ERROR
+    org.hibernate.jpa.internal: WARN
+
+# OpenAI (si nécessaire)
+openai:
+  api-key: ${OPENAI_API_KEY:}
+  base-url: https://api.openai.com/v1
+  model: gpt-4o-mini
+  timeout-ms: 60000
+  annexes:
+  ocr:
+    enabled: true
+    datapath: "C:\\Program Files\\Tesseract-OCR"  # <- le *parent* du dossier tessdata
+  lang: "fra+eng"
+  dpi: 300
+  max-pages: 10

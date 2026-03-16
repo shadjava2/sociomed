@@ -1,0 +1,117 @@
+<!-- Created with Jaspersoft Studio version 7.0.3.final using JasperReports Library version 7.0.3-41034ca841d452f3305ba55b9042260aaa1ab5dd  -->
+<jasperReport name="pec_listing" language="java" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoPages" columnWidth="786" leftMargin="28" rightMargin="28" topMargin="28" bottomMargin="28" uuid="6baf3cbc-0685-4bfc-ad2f-00dcb9516d41">
+	<parameter name="REPORT_TITLE" class="java.lang.String"/>
+	<parameter name="HOPITAL_LABEL" class="java.lang.String"/>
+	<parameter name="MONTH_LABEL" class="java.lang.String"/>
+	<parameter name="PRINTED_AT" class="java.lang.String"/>
+	<parameter name="logo" class="java.io.InputStream"/>
+	<parameter name="backgroundImage" class="java.lang.Object"/>
+	<field name="numero" class="java.lang.String"/>
+	<field name="dateEmissionStr" class="java.lang.String"/>
+	<field name="dateExpirationStr" class="java.lang.String"/>
+	<field name="statut" class="java.lang.String"/>
+	<field name="hopitalNom" class="java.lang.String"/>
+	<field name="beneficiaireNom" class="java.lang.String"/>
+	<field name="beneficiaireQualite" class="java.lang.String"/>
+	<field name="etablissement" class="java.lang.String"/>
+	<field name="motif" class="java.lang.String"/>
+	<background height="595">
+		<element kind="image" uuid="b68acbb1-0dd8-476b-8057-51d203217f45" x="-28" y="0" width="898" height="595" scaleImage="FillFrame" onErrorType="Blank">
+			<expression><![CDATA[$P{backgroundImage} != null ? new java.io.ByteArrayInputStream((byte[]) $P{backgroundImage}) : java.lang.Thread.currentThread().getContextClassLoader().getResourceAsStream("reports/fond_paysage_a4.png")]]></expression>
+		</element>
+	</background>
+	<title height="96" splitType="Stretch">
+		<element kind="image" uuid="a8936703-6379-4b24-ade6-bd2da0996abe" x="0" y="0" width="56" height="56" scaleImage="RetainShape" onErrorType="Blank">
+			<expression><![CDATA[$P{logo}]]></expression>
+		</element>
+		<element kind="staticText" uuid="b8b44bf8-29a2-443d-8e2d-671e07f51bf5" x="64" y="2" width="400" height="20" fontName="DejaVu Serif" fontSize="12.0" bold="true" vTextAlign="Middle">
+			<text><![CDATA[SÉNAT DE LA RÉPUBLIQUE DÉMOCRATIQUE DU CONGO]]></text>
+		</element>
+		<element kind="textField" uuid="d0699517-7aad-40ff-b8cd-5b7e4f1bbf51" x="64" y="26" width="400" height="20" fontName="DejaVu Serif" fontSize="13.0" bold="true" vTextAlign="Middle">
+			<expression><![CDATA[$P{REPORT_TITLE}]]></expression>
+		</element>
+		<element kind="rectangle" uuid="17025f16-a2f5-4abc-8571-e2747ee7f67f" x="480" y="0" width="306" height="52">
+			<pen lineWidth="0.5" lineColor="#666666"/>
+		</element>
+		<element kind="textField" uuid="2b9d6a6c-5cf7-426f-96db-499ec8617024" x="488" y="8" width="290" height="14" fontName="DejaVu Serif" fontSize="10.0" hTextAlign="Right" vTextAlign="Middle">
+			<expression><![CDATA["Établissement : " + $P{HOPITAL_LABEL}]]></expression>
+		</element>
+		<element kind="textField" uuid="a7b533ed-42c1-48e8-8c6a-479d926fa250" x="488" y="24" width="290" height="14" fontName="DejaVu Serif" fontSize="10.0" hTextAlign="Right" vTextAlign="Middle">
+			<expression><![CDATA["Période : " + $P{MONTH_LABEL}]]></expression>
+		</element>
+		<element kind="textField" uuid="8fb6dd0e-2c7a-48b2-93e7-b96ce3df6c3a" x="488" y="40" width="290" height="14" fontName="DejaVu Serif" fontSize="10.0" hTextAlign="Right" vTextAlign="Middle">
+			<expression><![CDATA["Imprimé le : " + $P{PRINTED_AT}]]></expression>
+		</element>
+		<element kind="line" uuid="33c8950e-6d37-45eb-a85f-5cf8e26afff0" x="0" y="88" width="786" height="1">
+			<pen lineWidth="0.75" lineColor="#333333"/>
+		</element>
+	</title>
+	<columnHeader height="28" splitType="Stretch">
+		<element kind="rectangle" uuid="ed1d7b35-8a93-44b1-a5c6-0d02369d41ba" x="0" y="0" width="786" height="28" backcolor="#E8E8E8">
+			<pen lineWidth="0.5" lineColor="#333333"/>
+		</element>
+		<element kind="staticText" uuid="32106504-a20d-4118-9325-95970f73c26c" x="4" y="6" width="169" height="16" fontName="DejaVu Serif" fontSize="10.0" bold="true" vTextAlign="Middle">
+			<text><![CDATA[N° PEC]]></text>
+		</element>
+		<element kind="staticText" uuid="3ad0dd03-077b-462e-a524-1acf77a4be2d" x="173" y="6" width="68" height="16" fontName="DejaVu Serif" fontSize="10.0" bold="true" vTextAlign="Middle">
+			<text><![CDATA[Date]]></text>
+		</element>
+		<element kind="staticText" uuid="bbeaa856-6b9b-40c6-9606-c118b18482db" x="242" y="6" width="72" height="16" fontName="DejaVu Serif" fontSize="10.0" bold="true" vTextAlign="Middle">
+			<text><![CDATA[Date exp.]]></text>
+		</element>
+		<element kind="staticText" uuid="2b14dcad-31cf-4b55-85cb-fce4d6935cf8" x="315" y="6" width="160" height="16" fontName="DejaVu Serif" fontSize="10.0" bold="true" vTextAlign="Middle">
+			<text><![CDATA[Bénéficiaire]]></text>
+		</element>
+		<element kind="staticText" uuid="bbd92154-ba21-4605-9d6b-2b5618ac150b" x="475" y="6" width="88" height="16" fontName="DejaVu Serif" fontSize="10.0" bold="true" vTextAlign="Middle">
+			<text><![CDATA[Qualité]]></text>
+		</element>
+		<element kind="staticText" uuid="fe0c6d2c-6065-46d3-b787-712d4746fb53" x="563" y="6" width="72" height="16" fontName="DejaVu Serif" fontSize="10.0" bold="true" vTextAlign="Middle">
+			<text><![CDATA[Statut]]></text>
+		</element>
+		<element kind="staticText" uuid="f04f4463-8983-4247-8b1e-fa4faf4ee860" x="635" y="6" width="151" height="16" fontName="DejaVu Serif" fontSize="10.0" bold="true" vTextAlign="Middle">
+			<text><![CDATA[Adressé à]]></text>
+		</element>
+	</columnHeader>
+	<detail>
+		<band height="24" splitType="Stretch">
+			<element kind="line" uuid="84ae6195-caeb-4ee6-b76d-247bd41ceadc" x="0" y="23" width="786" height="1">
+				<pen lineWidth="0.25" lineColor="#DDDDDD"/>
+			</element>
+			<element kind="textField" uuid="093a6bc1-431a-4126-82dd-760275f8349d" stretchType="ElementGroupHeight" x="4" y="4" width="169" height="16" fontName="DejaVu Serif" fontSize="10.0" textAdjust="StretchHeight" vTextAlign="Middle">
+				<expression><![CDATA[$F{numero}]]></expression>
+			</element>
+			<element kind="textField" uuid="5fb8a0b7-d4ed-4687-9734-26bfca0fc0ef" stretchType="ElementGroupHeight" x="173" y="4" width="64" height="16" fontName="DejaVu Serif" fontSize="10.0" vTextAlign="Middle">
+				<expression><![CDATA[$F{dateEmissionStr}]]></expression>
+			</element>
+			<element kind="textField" uuid="f515a8a4-fe70-4ccd-b2c3-e8cb86cf9b35" stretchType="ElementGroupHeight" x="242" y="4" width="68" height="16" fontName="DejaVu Serif" fontSize="10.0" vTextAlign="Middle">
+				<expression><![CDATA[$F{dateExpirationStr}]]></expression>
+			</element>
+			<element kind="textField" uuid="a26127e2-88bb-4702-89be-84a776248a59" stretchType="ElementGroupHeight" x="315" y="4" width="156" height="16" fontName="DejaVu Serif" fontSize="10.0" textAdjust="StretchHeight" vTextAlign="Middle">
+				<expression><![CDATA[$F{beneficiaireNom}]]></expression>
+			</element>
+			<element kind="textField" uuid="c9366b83-6bc2-49f0-9f23-f98a387fd737" stretchType="ElementGroupHeight" x="475" y="4" width="84" height="16" fontName="DejaVu Serif" fontSize="10.0" textAdjust="StretchHeight" vTextAlign="Middle">
+				<expression><![CDATA[$F{beneficiaireQualite}]]></expression>
+			</element>
+			<element kind="textField" uuid="b667fceb-c190-4be8-8355-e6a4e3a97205" stretchType="ElementGroupHeight" x="563" y="4" width="68" height="16" fontName="DejaVu Serif" fontSize="10.0" vTextAlign="Middle">
+				<expression><![CDATA[$F{statut}]]></expression>
+			</element>
+			<element kind="textField" uuid="0ed7864f-96e1-4e08-9de3-71334b9bce5b" stretchType="ElementGroupHeight" x="635" y="4" width="151" height="16" fontName="DejaVu Serif" fontSize="10.0" textAdjust="StretchHeight" vTextAlign="Middle">
+				<expression><![CDATA[$F{etablissement}]]></expression>
+			</element>
+		</band>
+	</detail>
+	<pageFooter height="28" splitType="Stretch">
+		<element kind="line" uuid="8b83f76d-33d1-488b-a5cf-c0c8201c5450" x="0" y="0" width="786" height="1">
+			<pen lineWidth="0.25" lineColor="#CCCCCC"/>
+		</element>
+		<element kind="textField" uuid="a81eda9d-9ebb-48ed-91b0-216100a6d69a" x="0" y="8" width="350" height="14" fontName="DejaVu Serif" fontSize="9.0" vTextAlign="Middle">
+			<expression><![CDATA["Total : " + $V{REPORT_COUNT} + " enregistrement(s)"]]></expression>
+		</element>
+		<element kind="textField" uuid="63a05565-c112-4622-acda-95a737fcb743" x="350" y="8" width="86" height="14" fontName="DejaVu Serif" fontSize="9.0" evaluationTime="Report" hTextAlign="Right" vTextAlign="Middle">
+			<expression><![CDATA["Page " + $V{PAGE_NUMBER} + " / " + $V{PAGE_COUNT}]]></expression>
+		</element>
+		<element kind="staticText" uuid="d28aa7ff-b11a-4340-8ac6-617c88b3702b" x="436" y="8" width="350" height="14" fontName="DejaVu Serif" fontSize="8.0" hTextAlign="Right" vTextAlign="Middle">
+			<text><![CDATA[Document officiel — Sénat RDC]]></text>
+		</element>
+	</pageFooter>
+</jasperReport>
