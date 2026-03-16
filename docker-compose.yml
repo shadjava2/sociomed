@@ -83,7 +83,8 @@ services:
     image: docker.io/cloudflare/cloudflared:latest
     container_name: pec-cloudflared
     restart: unless-stopped
-    command: ["sh", "-c", 'exec cloudflared tunnel --no-autoupdate run --token "$$TUNNEL_TOKEN"']
+    # Token passe au process (expansion $TUNNEL_TOKEN dans le container)
+    command: ["sh", "-c", "if [ -z \"$$TUNNEL_TOKEN\" ]; then echo 'ERREUR: TUNNEL_TOKEN vide dans le container'; exit 1; fi; exec cloudflared tunnel --no-autoupdate run --token \"$$TUNNEL_TOKEN\""]
     environment:
       TUNNEL_TOKEN: "${CLOUDFLARED_TUNNEL_TOKEN:?Definir CLOUDFLARED_TUNNEL_TOKEN dans .env pour le profile tunnel}"
     depends_on:
