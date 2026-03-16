@@ -27,7 +27,9 @@ services:
     depends_on:
       - redis
     networks:
-      - pec-net
+      pec-net:
+        aliases:
+          - backend
     # 16c/64G : limiter le backend pour laisser de la RAM à Redis, Caddy, OS (docker compose respecte mem_limit)
     mem_limit: 28g
     mem_reservation: 1g
@@ -42,7 +44,9 @@ services:
     container_name: pec-frontend
     restart: unless-stopped
     networks:
-      - pec-net
+      pec-net:
+        aliases:
+          - frontend
 
   redis:
     image: docker.io/library/redis:7-alpine
@@ -50,11 +54,13 @@ services:
     restart: unless-stopped
     volumes:
       - redis_data:/data
-    networks:
-      - pec-net
     # Production : 1 Go max, éviction LRU si dépassement (session/cache)
     command: redis-server --appendonly yes --maxmemory 1gb --maxmemory-policy allkeys-lru --tcp-keepalive 60
     mem_limit: 1536m
+    networks:
+      pec-net:
+        aliases:
+          - redis
 
   caddy:
     image: docker.io/library/caddy:2-alpine
@@ -75,7 +81,9 @@ services:
       - backend
       - frontend
     networks:
-      - pec-net
+      pec-net:
+        aliases:
+          - caddy
 
   # Tunnel Cloudflare — pointez la route publiée vers http://caddy:80 (pas frontend:80)
   # Démarrage : docker compose --profile tunnel up -d
@@ -89,7 +97,9 @@ services:
     depends_on:
       - caddy
     networks:
-      - pec-net
+      pec-net:
+        aliases:
+          - cloudflared
     profiles:
       - tunnel
 
