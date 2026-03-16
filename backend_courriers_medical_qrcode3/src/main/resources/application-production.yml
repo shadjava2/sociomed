@@ -1,4 +1,4 @@
-# Profil production — serveur Ubuntu / Docker
+# Profil production — serveur 16 vCPU / 64 Go RAM (Cloud VPS 50)
 # Activer avec: spring.profiles.active=production
 # Variables d'environnement : APP_PUBLIC_BASE_URL, APP_FRONT_BASE_URL, SPRING_DATASOURCE_*, JWT_SECRET
 
@@ -20,13 +20,16 @@ spring:
     password: ${SPRING_DATASOURCE_PASSWORD}
     hikari:
       pool-name: PecHikariPool
-      minimum-idle: 20
-      maximum-pool-size: 50
+      # 16 vCPU : pool suffisant pour requêtes concurrentes + marge
+      minimum-idle: 25
+      maximum-pool-size: 80
       idle-timeout: 300000
       max-lifetime: 1800000
       connection-timeout: 20000
       connection-test-query: SELECT 1
       leak-detection-threshold: 0
+      # Réutilisation des connexions, moins de latence
+      connection-init-sql: SELECT 1
   jpa:
     show-sql: false
     properties:
@@ -34,15 +37,31 @@ spring:
         format_sql: false
         jdbc:
           batch_size: 50
+        order_inserts: true
+        order_updates: true
+    open-in-view: false
 
 server:
   compression:
     enabled: true
+    min-response-size: 1024
     mime-types: application/json,application/xml,text/html,text/plain,text/css,application/javascript
   tomcat:
     threads:
-      max: 200
-      min-spare: 25
-    accept-count: 100
+      # 16 cœurs : beaucoup de requêtes simultanées
+      max: 400
+      min-spare: 50
+    accept-count: 200
     connection-timeout: 20000
     max-connections: 10000
+    # Keep-alive pour réutiliser les connexions
+    max-keep-alive-requests: 10000
+  # En-têtes HTTP (requêtes longues / tokens)
+  max-http-request-header-size: 16KB
+
+# Logs production : moins de bruit
+logging:
+  level:
+    root: INFO
+    org.springframework.web: WARN
+    org.hibernate.SQL: WARN

@@ -28,6 +28,8 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        // Fonds A4 dépassent 2 MiB (limite par défaut Workbox)
+        maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
         runtimeCaching: [
           { urlPattern: /^https:\/\/.*\/api\/.*/i, handler: 'NetworkFirst', options: { networkTimeoutSeconds: 10, cacheName: 'api-cache', expiration: { maxEntries: 50, maxAgeSeconds: 300 } } },
         ],

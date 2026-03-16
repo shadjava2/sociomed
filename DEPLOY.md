@@ -1,5 +1,39 @@
 # Déploiement — Git, Docker, Redis, Caddy, Cloudflare
 
+## Sur Ubuntu (serveur) — étapes rapides
+
+```bash
+# 1. Installer Docker et Docker Compose (si pas déjà fait)
+sudo apt update && sudo apt install -y docker.io docker-compose-plugin
+sudo usermod -aG docker $USER
+# Se déconnecter/reconnecter pour que le groupe soit pris en compte
+
+# 2. Cloner le dépôt
+git clone https://github.com/shadjava2/sociomed.git
+cd sociomed
+
+# 3. Fichier d'environnement
+cp .env.example .env
+nano .env   # Remplir : DOMAIN, APP_PUBLIC_BASE_URL, APP_FRONT_BASE_URL, SPRING_DATASOURCE_*, JWT_SECRET
+
+# 4. Générer un JWT_SECRET
+openssl rand -base64 32
+# Coller le résultat dans .env pour JWT_SECRET=...
+
+# 5. Lancer les conteneurs
+docker compose up -d --build
+
+# 6. Vérifier
+docker compose ps
+curl -s http://localhost/api/actuator/health   # ou votre domaine
+```
+
+**MySQL :** soit une base déjà installée sur le serveur (ou distante), soit ajouter le service `mysql` dans `docker-compose.yml` (voir section 3 ci‑dessous). Dans `.env`, mettre `SPRING_DATASOURCE_URL=jdbc:mysql://IP_OU_HOST:3306/senat_courriers_audiences?...`.
+
+**Mises à jour :** `cd sociomed && git pull && docker compose up -d --build`
+
+---
+
 ## Prérequis
 
 - Serveur (VPS) avec Docker et Docker Compose

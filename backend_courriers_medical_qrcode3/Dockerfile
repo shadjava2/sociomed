@@ -8,7 +8,7 @@ RUN mvn dependency:go-offline -B
 COPY src src
 RUN mvn package -DskipTests -B
 
-# Run stage
+# Run stage — JVM options via JAVA_OPTS (ex: -Xms2g -Xmx24g -XX:+UseG1GC)
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
@@ -18,4 +18,5 @@ USER appuser
 COPY --from=builder /app/target/*.jar app.jar
 
 EXPOSE 8085
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Permet de surcharger les options JVM depuis docker-compose (production 16c/64G)
+ENTRYPOINT ["sh", "-c", "exec java ${JAVA_OPTS:--Xms512m -Xmx2g -XX:+UseG1GC -XX:MaxGCPauseMillis=200} -jar app.jar"]

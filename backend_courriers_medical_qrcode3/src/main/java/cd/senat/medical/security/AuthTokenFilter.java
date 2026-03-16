@@ -36,7 +36,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         String path = request.getServletPath();
         return HttpMethod.OPTIONS.matches(request.getMethod())
             || PATH_MATCHER.match("/api/auth/**", path)
-            || PATH_MATCHER.match("/api/health", path)
+            || PATH_MATCHER.match("/api/health", path) || PATH_MATCHER.match("/health", path)
             || PATH_MATCHER.match("/v3/api-docs/**", path)
             || PATH_MATCHER.match("/swagger-ui/**", path)
             || PATH_MATCHER.match("/swagger-ui.html", path)

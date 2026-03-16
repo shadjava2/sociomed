@@ -114,7 +114,7 @@ public class WebSecurityConfig {
           .requestMatchers("/api/2fa/**").authenticated()
 
           // Health / autres publics
-          .requestMatchers("/api/constitution-chat", "/api/health").permitAll()
+          .requestMatchers("/api/constitution-chat", "/api/health", "/health").permitAll()
 
           // Fichiers publics existants (inchangé)
           .requestMatchers(HttpMethod.GET,
