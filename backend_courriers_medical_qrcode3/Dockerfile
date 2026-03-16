@@ -13,6 +13,8 @@ FROM docker.io/library/eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
 RUN adduser -D -s /bin/sh appuser
+# Répertoire annexes (AnnexesStorageServiceImpl) — doit exister et être writable par appuser
+RUN mkdir -p /app/annexes_upload /app/uploads/photos && chown -R appuser:appuser /app/annexes_upload /app/uploads
 USER appuser
 
 COPY --from=builder /app/target/*.jar app.jar

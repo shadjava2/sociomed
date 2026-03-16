@@ -23,9 +23,6 @@ dist-ssr/
 **/.env.production
 
 # Uploads & data (ne pas versionner)
-uploads/
-**/uploads/photos/
-**/annexes_upload/
 *.db
 *.sqlite
 
