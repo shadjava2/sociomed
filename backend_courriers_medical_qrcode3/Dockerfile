@@ -1,5 +1,5 @@
-# Build stage
-FROM maven:3.9-eclipse-temurin-21-alpine AS builder
+# Build stage (nom complet pour Podman)
+FROM docker.io/library/maven:3.9-eclipse-temurin-21-alpine AS builder
 WORKDIR /app
 
 COPY pom.xml .
@@ -8,8 +8,8 @@ RUN mvn dependency:go-offline -B
 COPY src src
 RUN mvn package -DskipTests -B
 
-# Run stage — JVM options via JAVA_OPTS (ex: -Xms2g -Xmx24g -XX:+UseG1GC)
-FROM eclipse-temurin:21-jre-alpine
+# Run stage (nom complet pour Podman)
+FROM docker.io/library/eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
 RUN adduser -D -s /bin/sh appuser

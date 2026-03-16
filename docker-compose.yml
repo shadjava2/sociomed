@@ -45,7 +45,7 @@ services:
       - pec-net
 
   redis:
-    image: redis:7-alpine
+    image: docker.io/library/redis:7-alpine
     container_name: pec-redis
     restart: unless-stopped
     volumes:
@@ -57,7 +57,7 @@ services:
     mem_limit: 1536m
 
   caddy:
-    image: caddy:2-alpine
+    image: docker.io/library/caddy:2-alpine
     container_name: pec-caddy
     restart: unless-stopped
     ports:
@@ -80,7 +80,7 @@ services:
   # Tunnel Cloudflare — pointez la route publiée vers http://caddy:80 (pas frontend:80)
   # Démarrage : docker compose --profile tunnel up -d
   cloudflared:
-    image: cloudflare/cloudflared:latest
+    image: docker.io/cloudflare/cloudflared:latest
     container_name: pec-cloudflared
     restart: unless-stopped
     command: ["sh", "-c", 'exec cloudflared tunnel --no-autoupdate run --token "$$TUNNEL_TOKEN"']
