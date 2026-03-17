@@ -23,13 +23,17 @@ public class CorsConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        // Patterns par défaut : localhost + tout host sur le port 5173 (dev réseau)
+        // Patterns par défaut : localhost, dev (5173), prod Caddy (9080/9443), tout HTTPS
         List<String> patterns = Stream.of(
             "http://localhost:5173",
             "http://127.0.0.1:5173",
             "http://localhost:3000",
-            "http://*:5173",           // ex: http://192.168.22.30:5173
+            "http://localhost:9080",
+            "http://127.0.0.1:9080",
+            "http://*:5173",            // dev réseau ex: http://192.168.22.30:5173
             "http://*:3000",
+            "http://*:9080",             // prod Caddy (accès LAN ex: http://192.168.100.12:9080)
+            "http://*:9443",
             "https://*"
         ).collect(Collectors.toList());
 
