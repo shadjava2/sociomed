@@ -94,10 +94,8 @@ services:
     container_name: pec-cloudflared
     restart: unless-stopped
     env_file: .env
-    environment:
-      TUNNEL_TOKEN: ${CLOUDFLARED_TUNNEL_TOKEN}
-    # Token passé via TUNNEL_TOKEN (compose substitue depuis .env)
-    command: ["sh", "-c", "if [ -z \"$$TUNNEL_TOKEN\" ]; then echo 'ERREUR: CLOUDFLARED_TUNNEL_TOKEN manquant dans .env'; exit 1; fi; exec cloudflared tunnel --no-autoupdate run --token \"$$TUNNEL_TOKEN\""]
+    # Le token est chargé depuis .env (CLOUDFLARED_TUNNEL_TOKEN) et lu directement dans la commande
+    command: ["sh", "-c", "if [ -z \"$$CLOUDFLARED_TUNNEL_TOKEN\" ]; then echo 'ERREUR: CLOUDFLARED_TUNNEL_TOKEN manquant dans .env'; exit 1; fi; exec cloudflared tunnel --no-autoupdate run --token \"$$CLOUDFLARED_TUNNEL_TOKEN\""]
     depends_on:
       - caddy
     networks:
