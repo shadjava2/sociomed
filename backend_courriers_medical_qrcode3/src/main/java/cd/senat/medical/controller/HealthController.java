@@ -6,12 +6,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Endpoint de health pour le déploiement et les load balancers.
- * Caddy transmet /api/health → backend en /health. Sans auth (WebSecurityConfig autorise /api/health).
+ * Caddy garde le chemin (handle /api/*) donc les deux chemins sont exposés.
  */
 @RestController
 public class HealthController {
 
-  @GetMapping("/health")
+  @GetMapping({"/health", "/api/health"})
   public ResponseEntity<String> health() {
     return ResponseEntity.ok("ok");
   }
