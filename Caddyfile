@@ -3,8 +3,8 @@
 # En prod derrière Cloudflare, l'IP client peut etre lue via X-Forwarded-For / CF-Connecting-IP côté app
 
 :80 {
-    # API → backend (nom conteneur pour compatibilité Docker/Podman)
-    handle_path /api/* {
+    # API → backend (handle garde le chemin complet pour Spring /api/auth/signin etc.)
+    handle /api/* {
         reverse_proxy pec-backend:8085 {
             header_up Host {host}
             header_up X-Real-IP {remote_host}
