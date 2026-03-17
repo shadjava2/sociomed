@@ -44,6 +44,8 @@ BUILD_MAX_ATTEMPTS="${BUILD_MAX_ATTEMPTS:-3}"
 BUILD_RETRY_DELAY="${BUILD_RETRY_DELAY:-15}"
 HEALTH_MAX_ATTEMPTS="${HEALTH_MAX_ATTEMPTS:-36}"
 HEALTH_RETRY_DELAY="${HEALTH_RETRY_DELAY:-5}"
+# Délai avant la 1re vérification (Spring Boot peut mettre 30-60 s à démarrer)
+HEALTH_INITIAL_DELAY="${HEALTH_INITIAL_DELAY:-35}"
 BUILD_NO_CACHE="${BUILD_NO_CACHE:-0}"
 
 export PEC_REPO_ROOT="$REPO_ROOT"
@@ -161,6 +163,10 @@ else
 fi
 
 log_line "[DEPLOY] Health backend: $BACKEND_HEALTH_URL"
+if [ -n "$HEALTH_INITIAL_DELAY" ] && [ "$HEALTH_INITIAL_DELAY" -gt 0 ] 2>/dev/null; then
+  log_line "[DEPLOY] Attente ${HEALTH_INITIAL_DELAY}s avant 1re vérification (démarrage JVM)..."
+  sleep "$HEALTH_INITIAL_DELAY"
+fi
 
 backend_ok=0
 for i in $(seq 1 "$HEALTH_MAX_ATTEMPTS"); do
@@ -169,11 +175,14 @@ for i in $(seq 1 "$HEALTH_MAX_ATTEMPTS"); do
     log_line "[DEPLOY] Backend OK"
     break
   fi
+  [ $((i % 6)) -eq 0 ] && log_line "[DEPLOY] Health tentative $i/$HEALTH_MAX_ATTEMPTS..."
   sleep "$HEALTH_RETRY_DELAY"
 done
 
 if [ "$backend_ok" -ne 1 ]; then
   log_line "[DEPLOY] Backend KO après vérification"
+  log_line "[DEPLOY] Derniers logs pec-backend:"
+  docker logs pec-backend 2>&1 | tail -40 | while read -r line; do log_line "  $line"; done
   rollback
 fi
 
