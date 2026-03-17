@@ -37,8 +37,8 @@ ENV_FILE="${ENV_FILE:-$REPO_ROOT/.env}"
 ROLLBACK_FILE="$REPO_ROOT/.deploy-rollback"
 CURRENT_FILE="$REPO_ROOT/.deploy-current"
 
-# Health via Caddy (port 80) → /api/* → backend:8085
-BACKEND_HEALTH_URL="${BACKEND_HEALTH_URL:-http://127.0.0.1/api/health}"
+# Health via Caddy (port 9080 sur l'hôte pour éviter conflit avec PACS 80/443)
+BACKEND_HEALTH_URL="${BACKEND_HEALTH_URL:-http://127.0.0.1:9080/api/health}"
 
 BUILD_MAX_ATTEMPTS="${BUILD_MAX_ATTEMPTS:-3}"
 BUILD_RETRY_DELAY="${BUILD_RETRY_DELAY:-15}"
@@ -106,7 +106,11 @@ rollback() {
     fi
   done
 
-  compose up -d || true
+  if [ -n "${CLOUDFLARED_TUNNEL_TOKEN:-}" ] && $COMPOSE_BIN -f "$COMPOSE_FILE" -p "$COMPOSE_PROJECT_NAME" --project-directory "$REPO_ROOT" config --services 2>/dev/null | grep -qx "cloudflared"; then
+    compose --profile tunnel up -d || true
+  else
+    compose up -d || true
+  fi
   log_line "[DEPLOY] Rollback terminé"
   log_line "[DEPLOY] État courant:"
   compose ps || true
@@ -150,7 +154,11 @@ while [ "$attempt" -le "$BUILD_MAX_ATTEMPTS" ]; do
 done
 
 log_line "[DEPLOY] Démarrage stack (sans arrêt prolongé)..."
-compose up -d
+if [ -n "${CLOUDFLARED_TUNNEL_TOKEN:-}" ] && $COMPOSE_BIN -f "$COMPOSE_FILE" -p "$COMPOSE_PROJECT_NAME" --project-directory "$REPO_ROOT" config --services 2>/dev/null | grep -qx "cloudflared"; then
+  compose --profile tunnel up -d
+else
+  compose up -d
+fi
 
 log_line "[DEPLOY] Health backend: $BACKEND_HEALTH_URL"
 
