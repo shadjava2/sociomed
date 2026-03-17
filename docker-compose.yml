@@ -94,17 +94,8 @@ services:
     container_name: pec-cloudflared
     restart: unless-stopped
     env_file: .env
-    environment:
-      CLOUDFLARED_TUNNEL_TOKEN: "${CLOUDFLARED_TUNNEL_TOKEN}"
-    # Forcer l'entrypoint (l'image a ENTRYPOINT cloudflared, sinon la commande serait passée à cloudflared)
-    entrypoint: ["sh", "-c"]
-    command:
-      - |
-        if [ -z "$$CLOUDFLARED_TUNNEL_TOKEN" ]; then
-          echo "ERREUR: CLOUDFLARED_TUNNEL_TOKEN manquant dans .env"
-          exit 1
-        fi
-        exec cloudflared tunnel --no-autoupdate run --token "$$CLOUDFLARED_TUNNEL_TOKEN"
+    # Token substitué depuis .env par Compose ; l'image n'a pas de shell, on passe les args à cloudflared
+    command: ["tunnel", "--no-autoupdate", "run", "--token", "${CLOUDFLARED_TUNNEL_TOKEN}"]
     depends_on:
       - caddy
     networks:
