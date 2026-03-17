@@ -42,6 +42,7 @@ import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import net.sf.jasperreports.engine.JREmptyDataSource;
+import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -246,11 +247,7 @@ public class PriseEnChargePrintController {
         return m;
       }).collect(Collectors.toList());
 
-      JasperReport report;
-      try (
-          InputStream jrxml = new ClassPathResource("reports/pec_listing.jrxml").getInputStream()) {
-        report = JasperCompileManager.compileReport(jrxml);
-      }
+      JasperReport report = loadReport("pec_listing");
 
       JasperPrint jp =
           JasperFillManager.fillReport(report, params, new JRBeanCollectionDataSource(data));
@@ -376,10 +373,7 @@ public class PriseEnChargePrintController {
     byte[] qrPng = qrCodeService.png(qrUrl, 300);
     params.put("qrcode", qrPng);
 
-    JasperReport report;
-    try (var jrxml = new ClassPathResource("reports/pec_note.jrxml").getInputStream()) {
-      report = JasperCompileManager.compileReport(jrxml);
-    }
+    JasperReport report = loadReport("pec_note");
     JasperPrint jp = JasperFillManager.fillReport(report, params, new JREmptyDataSource(1));
 
     String filename = "PEC-" + d.numero() + ".pdf";
@@ -532,6 +526,24 @@ public class PriseEnChargePrintController {
       log.warn("Impossible de charger l'image de fond depuis l'URL: {} — {}", imageUrl, e.getMessage());
     }
     return null;
+  }
+
+  /**
+   * Charge un rapport Jasper : utilise le .jasper précompilé (build Maven) si présent,
+   * sinon compile le .jrxml à la volée (nécessite javac/JDK en prod, à éviter).
+   */
+  private JasperReport loadReport(String baseName) throws Exception {
+    String jasperPath = "reports/" + baseName + ".jasper";
+    String jrxmlPath = "reports/" + baseName + ".jrxml";
+    var jasperRes = new ClassPathResource(jasperPath);
+    if (jasperRes.exists()) {
+      try (InputStream in = jasperRes.getInputStream()) {
+        return (JasperReport) JRLoader.loadObject(in);
+      }
+    }
+    try (InputStream in = new ClassPathResource(jrxmlPath).getInputStream()) {
+      return JasperCompileManager.compileReport(in);
+    }
   }
 
   /** Charge une image de fond depuis le classpath. Essaie plusieurs chemins. Retourne null si absent. */

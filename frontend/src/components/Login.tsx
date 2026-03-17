@@ -121,6 +121,9 @@ export const Login: React.FC = () => {
               Sénat
             </h1>
             <p className="mt-0.5 text-xs sm:text-sm text-white/90 font-medium tracking-widest uppercase">
+              DIRECTION SOCIO MÉDICALE
+            </p>
+            <p className="mt-0.5 text-xs text-white/80 font-medium tracking-widest uppercase">
               Prise en charge médicale
             </p>
           </div>
