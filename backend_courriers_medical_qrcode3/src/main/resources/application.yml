@@ -51,9 +51,9 @@ spring:
   datasource:
     # socketTimeout (ms) : évite que les opérations longues (ex: migration Hibernate) coupent la connexion
     # tcpKeepAlive : limite les coupures par les pare-feu/NAT sur connexions inactives
-    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://127.0.0.1:3306/senat_courriers_audiences?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&cachePrepStmts=true&useServerPrepStmts=true&prepStmtCacheSize=250&prepStmtCacheSqlLimit=2048&socketTimeout=60000&tcpKeepAlive=true}
-    username: ${SPRING_DATASOURCE_USERNAME:root}
-    password: ${SPRING_DATASOURCE_PASSWORD:}
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://127.0.0.1:32768/senat_courriers_audiences?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&cachePrepStmts=true&useServerPrepStmts=true&prepStmtCacheSize=250&prepStmtCacheSqlLimit=2048&socketTimeout=60000&tcpKeepAlive=true}
+    username: ${SPRING_DATASOURCE_USERNAME:shad}
+    password: ${SPRING_DATASOURCE_PASSWORD:SDconceptsrdc@243}
     # HikariCP — valeurs par défaut (dev / petit serveur). En production (serveur puissant), utiliser spring.profiles.active=production
     hikari:
       pool-name: PecHikariPool
