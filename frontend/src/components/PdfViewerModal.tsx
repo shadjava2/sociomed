@@ -1,5 +1,6 @@
 // src/components/PdfViewerModal.tsx
 import React, { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import {
   X,
   Printer,
@@ -63,21 +64,15 @@ export const PdfViewerModal: React.FC<PdfViewerModalProps> = ({
         iframe.contentWindow.focus();
         iframe.contentWindow.print();
       } catch {
-        const w = window.open(blobUrl, '_blank');
-        if (w) {
-          w.onload = () => {
-            w.print();
-            w.onafterprint = () => w.close();
-          };
+        // En PWA / certains navigateurs, imprimer via l’iframe peut échouer : proposer d’enregistrer puis d’imprimer.
+        if (typeof globalThis !== 'undefined' && globalThis.document) {
+          const a = document.createElement('a');
+          a.href = blobUrl;
+          a.download = filename || 'document.pdf';
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
         }
-      }
-    } else {
-      const w = window.open(blobUrl, '_blank');
-      if (w) {
-        w.onload = () => {
-          w.print();
-          w.onafterprint = () => w.close();
-        };
       }
     }
   };
@@ -101,9 +96,10 @@ export const PdfViewerModal: React.FC<PdfViewerModalProps> = ({
 
   const displayTitle = title || filename || 'Rapport PDF';
 
-  return (
+  const modalContent = (
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60"
+      className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/60"
+      style={{ isolation: 'isolate' }}
       onClick={(e) => (e.target === e.currentTarget && !fullscreen ? onClose() : null)}
       onKeyDown={(e) => (e.key === 'Escape' && !fullscreen ? onClose() : null)}
       role="presentation"
@@ -114,7 +110,7 @@ export const PdfViewerModal: React.FC<PdfViewerModalProps> = ({
         aria-label={displayTitle}
         className={`
           bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col
-          ${fullscreen ? 'fixed inset-4 z-[10000] rounded-xl' : 'w-[min(1100px,96vw)] max-h-[92vh]'}
+          ${fullscreen ? 'fixed inset-4 z-[100000] rounded-xl' : 'w-[min(1100px,96vw)] max-h-[92vh]'}
         `}
         onClick={(e) => e.stopPropagation()}
       >
@@ -195,4 +191,6 @@ export const PdfViewerModal: React.FC<PdfViewerModalProps> = ({
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 };
