@@ -8,8 +8,8 @@ RUN mvn dependency:go-offline -B
 COPY src src
 RUN mvn package -DskipTests -B
 
-# Run stage (nom complet pour Podman)
-FROM docker.io/library/eclipse-temurin:21-jre-alpine
+# Run stage : JDK requis pour la compilation à la volée des rapports Jasper (.jrxml → javac)
+FROM docker.io/library/eclipse-temurin:21-jdk-alpine
 WORKDIR /app
 
 RUN adduser -D -s /bin/sh appuser
