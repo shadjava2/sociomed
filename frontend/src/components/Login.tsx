@@ -249,6 +249,8 @@ export const Login: React.FC = () => {
 
             <footer className="mt-3 pt-3 border-t border-slate-200 text-center text-xs text-slate-500">
               © {new Date().getFullYear()} Sénat – Plateforme Prise en charge médicale
+              <br />
+              Développé par Otshudinkoy
             </footer>
           </div>
         </div>

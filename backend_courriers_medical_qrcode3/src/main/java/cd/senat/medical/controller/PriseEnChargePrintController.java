@@ -89,7 +89,7 @@ public class PriseEnChargePrintController {
       log.warn("print PEC: {}", rnfe.getMessage());
       sendError(resp, HttpServletResponse.SC_NOT_FOUND, "Note de prise en charge introuvable.");
     } catch (Exception e) {
-      log.error("Erreur print PEC", e);
+      log.error("Erreur print PEC: {} — {}", e.getClass().getSimpleName(), e.getMessage(), e);
       sendError(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
           "Erreur lors de la génération du PDF.");
     }
@@ -265,7 +265,7 @@ public class PriseEnChargePrintController {
       resp.flushBuffer();
 
     } catch (Exception e) {
-      log.error("Erreur impression listing PEC", e);
+      log.error("Erreur impression listing PEC: {} — {}", e.getClass().getSimpleName(), e.getMessage(), e);
       sendError(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
           "Erreur lors de la génération du listing PDF.");
     }

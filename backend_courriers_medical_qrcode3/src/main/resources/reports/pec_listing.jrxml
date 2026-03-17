@@ -15,8 +15,9 @@
 	<field name="beneficiaireQualite" class="java.lang.String"/>
 	<field name="etablissement" class="java.lang.String"/>
 	<field name="motif" class="java.lang.String"/>
-	<background height="595">
-		<element kind="image" uuid="b68acbb1-0dd8-476b-8057-51d203217f45" x="-28" y="0" width="898" height="595" scaleImage="FillFrame" onErrorType="Blank">
+	<!-- Hauteur = pageHeight - topMargin - bottomMargin (595-28-28=539), sinon JRValidationException -->
+	<background height="539">
+		<element kind="image" uuid="b68acbb1-0dd8-476b-8057-51d203217f45" x="-28" y="0" width="898" height="539" scaleImage="FillFrame" onErrorType="Blank">
 			<expression><![CDATA[$P{backgroundImage} != null ? new java.io.ByteArrayInputStream((byte[]) $P{backgroundImage}) : java.lang.Thread.currentThread().getContextClassLoader().getResourceAsStream("reports/fond_paysage_a4.png")]]></expression>
 		</element>
 	</background>
