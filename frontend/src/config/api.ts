@@ -10,21 +10,24 @@ const RETRY_DELAY_MS = 1000;
 /** URL de l’API : .env > param ?api= > sessionStorage > localhost (pour accès mobile via tunnel) */
 function getApiBaseUrl(): string {
   const fromEnv = import.meta.env.VITE_API_BASE_URL;
-  if (fromEnv && fromEnv.startsWith('http')) return fromEnv;
+  if (fromEnv && typeof fromEnv === 'string' && fromEnv.startsWith('http')) {
+    return fromEnv.replace(/\/api\/?$/, '');
+  }
 
   if (typeof window !== 'undefined') {
     const params = new URLSearchParams(window.location.search);
     const fromQuery = params.get('api');
     if (fromQuery && fromQuery.startsWith('http')) {
       try {
-        sessionStorage.setItem(STORAGE_KEY_API_BASE, fromQuery.replace(/\/$/, ''));
+        sessionStorage.setItem(STORAGE_KEY_API_BASE, fromQuery.replace(/\/api\/?$/, '').replace(/\/+$/, ''));
       } catch {
         /* ignore */
       }
-      return fromQuery.replace(/\/$/, '');
+      return fromQuery.replace(/\/api\/?$/, '').replace(/\/+$/, '');
     }
     const fromStorage = sessionStorage.getItem(STORAGE_KEY_API_BASE);
     if (fromStorage) return fromStorage;
+    return window.location.origin;
   }
 
   return 'http://localhost:8085';
