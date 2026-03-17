@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useAppDialog } from '../contexts/AppDialogContext';
+import { usePdfViewer } from '../contexts/PdfViewerContext';
 import { senateurService, Senateur, PageResponse } from '../services/senateurService';
 import { Plus, Edit, Trash2, Eye, Loader2, User, Stethoscope, RefreshCw } from 'lucide-react';
 import { PecFormForSenateur } from '../components/PecFormForSenateur';
@@ -17,6 +18,7 @@ export const SenateursList: React.FC = () => {
   const navigate = useNavigate();
   const { hasPermission } = useAuth();
   const { showConfirm, showError } = useAppDialog();
+  const { openPdf } = usePdfViewer();
 
   // UI state (modal + loader)
   const [showForm, setShowForm] = useState(false);
@@ -394,7 +396,8 @@ export const SenateursList: React.FC = () => {
             });
             if (ok) {
               try {
-                await pecService.print(pecId);
+                const { blob, filename } = await pecService.print(pecId);
+                openPdf(blob, filename, `Prise en charge #${pecId}`);
               } catch {
                 showError("Erreur lors de l'impression du PDF.");
               }

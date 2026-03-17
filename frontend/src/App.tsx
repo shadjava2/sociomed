@@ -10,6 +10,7 @@ import { SkeletonLayout } from './components/SkeletonLayout';
 import { OfflineBanner } from './components/OfflineBanner';
 import { InstallPWAPrompt } from './components/InstallPWAPrompt';
 import { ToastProvider } from './components/Toast';
+import { PdfViewerProvider } from './contexts/PdfViewerContext';
 
 /** Redirige "/" vers la première route autorisée pour éviter boucle avec ProtectedRoute. */
 function HomeRedirect() {
@@ -50,6 +51,7 @@ function App() {
   return (
     <BrowserRouter>
       <ToastProvider>
+      <PdfViewerProvider>
       <AppDialogProvider>
       <AuthProvider>
         <OfflineBanner />
@@ -176,6 +178,7 @@ function App() {
         </Suspense>
       </AuthProvider>
       </AppDialogProvider>
+      </PdfViewerProvider>
       </ToastProvider>
     </BrowserRouter>
   );

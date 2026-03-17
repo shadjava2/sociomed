@@ -92,21 +92,11 @@ const nextMonthStart = (ym: string) => {
   return `${n.getFullYear()}-${mm}-01`;
 };
 
-const openPdfBlob = (data: BlobPart, filename: string) => {
+export type PdfResult = { blob: Blob; filename: string };
+
+const buildPdfBlob = (data: BlobPart, filename: string): PdfResult => {
   const blob = new Blob([data], { type: 'application/pdf' });
-  const url = URL.createObjectURL(blob);
-
-  const w = window.open(url, '_blank', 'noopener,noreferrer');
-  if (!w) {
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-  }
-
-  setTimeout(() => URL.revokeObjectURL(url), 60_000);
+  return { blob, filename };
 };
 
 /** URL absolue de l'image de fond (frontend), passée au backend pour le rapport PDF */
@@ -178,15 +168,14 @@ export const pecService = {
   },
 
   /**
-   * Impression PDF de la liste
-   * Backend attendu:
-   * GET /api/pec/print-listing?hopitalId=...&month=YYYY-MM&limit=...
+   * Récupère le PDF de la liste des PEC (à afficher dans le modal ou à imprimer).
+   * Backend: GET /api/pec/print-listing?hopitalId=...&month=YYYY-MM&limit=...
    */
   async printListing(params: {
     hopitalId?: number | null;
     month?: string | null;
     limit?: number;
-  }): Promise<void> {
+  }): Promise<PdfResult> {
     const { hopitalId, month, limit = 5000 } = params;
     const qs = new URLSearchParams();
 
@@ -213,13 +202,14 @@ export const pecService = {
     }
 
     const suffix = month ? `-${month}` : '';
-    openPdfBlob(res.data, `PEC-listing${suffix}.pdf`);
+    const filename = `PEC-listing${suffix}.pdf`;
+    return buildPdfBlob(res.data, filename);
   },
 
   /**
-   * Impression d'une note unitaire (passe l'URL du fond portrait au backend pour le rapport)
+   * Récupère le PDF de la note de prise en charge (à afficher dans le modal ou à imprimer).
    */
-  async print(pecId: number): Promise<void> {
+  async print(pecId: number): Promise<PdfResult> {
     const fondPortraitUrl = getBackgroundImageUrl('/assets/fond_portrait_a4.png');
     const url = fondPortraitUrl
       ? `/api/pec/${pecId}/print?backgroundImageUrl=${encodeURIComponent(fondPortraitUrl)}`
@@ -233,7 +223,7 @@ export const pecService = {
       throw new Error("Le serveur n'a pas renvoyé un PDF.");
     }
 
-    openPdfBlob(res.data, `PEC-${pecId}.pdf`);
+    return buildPdfBlob(res.data, `PEC-${pecId}.pdf`);
   },
 
   async statsByHopital(month?: string) {

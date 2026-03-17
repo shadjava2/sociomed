@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppDialog } from '../contexts/AppDialogContext';
+import { usePdfViewer } from '../contexts/PdfViewerContext';
 import { senateurService, Senateur } from '../services/senateurService';
 import { conjointService, Conjoint } from '../services/conjointService';
 import { enfantService, Enfant } from '../services/enfantService';
@@ -71,6 +72,7 @@ export const SenateurDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { showConfirm, showError } = useAppDialog();
+  const { openPdf } = usePdfViewer();
   const [senateur, setSenateur] = useState<Senateur | null>(null);
   const [enfants, setEnfants] = useState<Enfant[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -529,7 +531,8 @@ export const SenateurDetails: React.FC = () => {
             });
             if (ok) {
               try {
-                await pecService.print(pecId);
+                const { blob, filename } = await pecService.print(pecId);
+                openPdf(blob, filename, `Prise en charge #${pecId}`);
               } catch {
                 showError("Erreur lors de l'impression du PDF.");
               }
@@ -559,7 +562,8 @@ export const SenateurDetails: React.FC = () => {
             });
             if (ok) {
               try {
-                await pecService.print(pecId);
+                const { blob, filename } = await pecService.print(pecId);
+                openPdf(blob, filename, `Prise en charge #${pecId}`);
               } catch {
                 showError("Erreur lors de l'impression du PDF.");
               }

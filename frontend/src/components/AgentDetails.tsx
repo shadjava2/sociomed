@@ -3,6 +3,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useAppDialog } from '../contexts/AppDialogContext';
+import { usePdfViewer } from '../contexts/PdfViewerContext';
 import { agentService, Agent } from '../services/agentService';
 import { conjointService } from '../services/conjointService';
 import { enfantService, Enfant } from '../services/enfantService';
@@ -56,6 +57,7 @@ export const AgentDetails: React.FC = () => {
   const navigate = useNavigate();
   const { hasPermission } = useAuth();
   const { showConfirm, showError } = useAppDialog();
+  const { openPdf } = usePdfViewer();
 
   const [agent, setAgent] = useState<Agent | null>(null);
   const [enfants, setEnfants] = useState<Enfant[]>([]);
@@ -584,7 +586,8 @@ return (
             });
             if (ok) {
               try {
-                await pecService.print(pecId);
+                const { blob, filename } = await pecService.print(pecId);
+                openPdf(blob, filename, `Prise en charge #${pecId}`);
               } catch {
                 showError("Erreur lors de l'impression du PDF.");
               }
@@ -610,7 +613,8 @@ return (
             });
             if (ok) {
               try {
-                await pecService.print(pecId);
+                const { blob, filename } = await pecService.print(pecId);
+                openPdf(blob, filename, `Prise en charge #${pecId}`);
               } catch {
                 showError("Erreur lors de l'impression du PDF.");
               }

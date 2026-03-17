@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useAppDialog } from '../contexts/AppDialogContext';
+import { usePdfViewer } from '../contexts/PdfViewerContext';
 import { pecService, PecListRow, PageResponse } from '../services/pecService';
 import { hopitauxService, HopitalLite } from '../services/hopitauxService';
 import {
@@ -76,6 +77,7 @@ const PecListSkeleton: React.FC = () => (
 export const PecList: React.FC = () => {
   const { hasPermission } = useAuth();
   const { showError } = useAppDialog();
+  const { openPdf } = usePdfViewer();
   const [loading, setLoading] = useState(true);
   const [printingListing, setPrintingListing] = useState(false);
   const [printingPecId, setPrintingPecId] = useState<number | null>(null);
@@ -144,11 +146,12 @@ export const PecList: React.FC = () => {
   const handlePrintListing = async () => {
     try {
       setPrintingListing(true);
-      await pecService.printListing({
+      const { blob, filename } = await pecService.printListing({
         hopitalId: hopitalId ? Number(hopitalId) : undefined,
         month: month || undefined,
         limit: 5000,
       });
+      openPdf(blob, filename, 'Liste des prises en charge');
     } catch (e) {
       console.error('Erreur impression liste PEC', e);
       showError("Impossible d'imprimer la liste.");
@@ -160,7 +163,8 @@ export const PecList: React.FC = () => {
   const handlePrintPec = async (pecId: number) => {
     try {
       setPrintingPecId(pecId);
-      await pecService.print(pecId);
+      const { blob, filename } = await pecService.print(pecId);
+      openPdf(blob, filename, `Prise en charge #${pecId}`);
     } catch (e) {
       console.error('Erreur impression PEC', e);
       showError("Impossible d'ouvrir le PDF.");
