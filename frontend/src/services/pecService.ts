@@ -200,7 +200,7 @@ export const pecService = {
 
     qs.set('limit', String(limit));
 
-    const fondPaysageUrl = getBackgroundImageUrl('/img/fond_paysage_a4.png');
+    const fondPaysageUrl = getBackgroundImageUrl('/assets/fond_paysage_a4.png');
     if (fondPaysageUrl) qs.set('backgroundImageUrl', fondPaysageUrl);
 
     const res = await api.get(`/api/pec/print-listing?${qs.toString()}`, {
@@ -220,7 +220,7 @@ export const pecService = {
    * Impression d'une note unitaire (passe l'URL du fond portrait au backend pour le rapport)
    */
   async print(pecId: number): Promise<void> {
-    const fondPortraitUrl = getBackgroundImageUrl('/img/fond_portrait_a4.png');
+    const fondPortraitUrl = getBackgroundImageUrl('/assets/fond_portrait_a4.png');
     const url = fondPortraitUrl
       ? `/api/pec/${pecId}/print?backgroundImageUrl=${encodeURIComponent(fondPortraitUrl)}`
       : `/api/pec/${pecId}/print`;

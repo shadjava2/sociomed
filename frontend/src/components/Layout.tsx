@@ -23,12 +23,17 @@ const SenateLogo: React.FC = () => (
     <img
       src="/assets/senat-logo.png"
       alt="Sénat - Accueil"
-      className="h-20 w-20 rounded-full object-contain ring-1 ring-black/10"
+      className="h-20 w-20 rounded-full object-contain ring-1 ring-black/10 shrink-0"
       loading="eager"
     />
-    <span className="text-sm font-semibold text-slate-800 tracking-tight">
-      Sénat
-    </span>
+    <div className="flex flex-col min-w-0">
+      <span className="text-sm font-semibold text-slate-800 tracking-tight">
+        Sénat
+      </span>
+      <span className="text-xs font-medium text-slate-600 tracking-wide uppercase">
+        DIRECTION SOCIO MÉDICALE
+      </span>
+    </div>
   </Link>
 );
 

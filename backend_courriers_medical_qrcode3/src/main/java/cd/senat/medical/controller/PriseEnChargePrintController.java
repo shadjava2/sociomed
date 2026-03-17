@@ -1,5 +1,6 @@
 package cd.senat.medical.controller;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
@@ -225,7 +226,8 @@ public class PriseEnChargePrintController {
       params.put("MONTH_LABEL", month != null && !month.isBlank() ? month : "Tous");
       params.put("PRINTED_AT", new SimpleDateFormat("dd/MM/yyyy HH:mm").format(new Date()));
 
-      params.put("logo", loadLogoBytes());
+      byte[] logoBytes = loadLogoBytes();
+      params.put("logo", logoBytes != null ? new ByteArrayInputStream(logoBytes) : null);
       byte[] bgBytes = (backgroundImageUrl != null && !backgroundImageUrl.isBlank())
           ? fetchImageBytesFromUrl(backgroundImageUrl) : null;
       params.put("backgroundImage", bgBytes != null ? bgBytes : loadBackgroundImageBytes("reports/fond_paysage_a4.png"));
@@ -491,7 +493,7 @@ public class PriseEnChargePrintController {
 
   /** Charge le logo en byte[] pour le rapport Jasper (plusieurs chemins essayés). */
   private static byte[] loadLogoBytes() {
-    String[] paths = {"static/logo192.png", "static/senat-logo.png", "static/logo.png", "logo.png"};
+    String[] paths = {"reports/senat-logo.png", "reports/logo.png", "static/logo192.png", "static/senat-logo.png", "static/logo.png", "logo.png"};
     for (String path : paths) {
       try {
         var res = new ClassPathResource(path);
@@ -557,7 +559,7 @@ public class PriseEnChargePrintController {
           try (InputStream in = res.getInputStream()) {
             byte[] bytes = in.readAllBytes();
             if (bytes != null && bytes.length > 0) {
-              log.debug("Image de fond chargée: {} ({} octets)", path, bytes.length);
+              log.info("Image de fond chargée pour sécurisation du document: {} ({} octets)", path, bytes.length);
               return bytes;
             }
           }

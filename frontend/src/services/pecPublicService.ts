@@ -36,7 +36,7 @@ export const pecPublicService = {
     const base = getPublicApiBaseUrl();
     const path = `/api/pec/public/${encodeURIComponent(token)}/pdf`;
     if (typeof window !== 'undefined' && window.location?.origin) {
-      const bgUrl = `${window.location.origin}/img/fond_portrait_a4.png`;
+      const bgUrl = `${window.location.origin}/assets/fond_portrait_a4.png`;
       return `${base}${path}?backgroundImageUrl=${encodeURIComponent(bgUrl)}`;
     }
     return `${base}${path}`;
