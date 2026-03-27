@@ -108,7 +108,7 @@
 + (($P{qualiteMalade} == null || $P{qualiteMalade}.trim().isEmpty()) ? "-" : $P{qualiteMalade})
 + "</p>"
 
-+ "<p><b>EST ADRESSE A LA :</b> "
++ "<p><b>EST ADRESSE A :</b> "
 + (($P{etablissement} == null || $P{etablissement}.trim().isEmpty()) ? "-" : $P{etablissement})
 + "</p>"
 
