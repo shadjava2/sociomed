@@ -1,68 +1,72 @@
 // src/components/Login.tsx
-import React, { useState } from 'react';
-import { useLocation, useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { Lock, User, Eye, EyeOff, Loader2, AlertCircle } from 'lucide-react';
+import { AlertCircle, Eye, EyeOff, Loader2, Lock, User } from 'lucide-react'
+import React, { useState } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
 
-const SENAT_BURGUNDY = '#800020';
+const SENAT_BURGUNDY = '#800020'
 
 export const Login: React.FC = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [totpCode, setTotpCode] = useState('');
-  const [totpRequired, setTotpRequired] = useState(false);
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [totpCode, setTotpCode] = useState('')
+  const [totpRequired, setTotpRequired] = useState(false)
 
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const { login } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation() as any;
-  const from = location.state?.from?.pathname || '/tableau-de-bord';
+  const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const { login } = useAuth()
+  const navigate = useNavigate()
+  const location = useLocation() as any
+  const from = location.state?.from?.pathname || '/tableau-de-bord'
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setIsLoading(true);
+    e.preventDefault()
+    setError('')
+    setIsLoading(true)
 
     try {
-      await login(username, password, totpRequired ? totpCode : undefined);
-      navigate(from, { replace: true });
+      await login(username, password, totpRequired ? totpCode : undefined)
+      navigate(from, { replace: true })
     } catch (err: any) {
       const isNetworkError =
         !err?.response &&
-        (err?.message === 'Network Error' || err?.code === 'ERR_NETWORK' || err?.message?.includes('Failed to fetch'));
+        (err?.message === 'Network Error' ||
+          err?.code === 'ERR_NETWORK' ||
+          err?.message?.includes('Failed to fetch'))
 
       if (isNetworkError) {
-        setError("Connexion au serveur impossible. Vérifiez votre connexion ou contactez l'administrateur.");
-        setIsLoading(false);
-        return;
+        setError(
+          "Connexion au serveur impossible. Vérifiez votre connexion ou contactez l'administrateur.",
+        )
+        setIsLoading(false)
+        return
       }
 
-      const data = err?.response?.data;
-      const msg: string = data?.message || data?.error || 'Erreur de connexion';
+      const data = err?.response?.data
+      const msg: string = data?.message || data?.error || 'Erreur de connexion'
 
       const twoFactorRequired =
         data?.twoFactorRequired === true ||
         data?.code === 'TOTP_REQUIRED' ||
         /otp\s+requis/i.test(msg) ||
-        /code\s+google\s+authenticator\s+requis/i.test(msg);
+        /code\s+google\s+authenticator\s+requis/i.test(msg)
 
       if (twoFactorRequired) {
-        setTotpRequired(true);
-        setError('Code Google Authenticator requis.');
-        return;
+        setTotpRequired(true)
+        setError('Code Google Authenticator requis.')
+        return
       }
 
       if (/otp\s+invalide/i.test(msg) || /invalide\s+ou\s+manquant/i.test(msg)) {
-        setTotpRequired(true);
+        setTotpRequired(true)
       }
 
-      setError(msg);
+      setError(msg)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
     <div
@@ -101,7 +105,9 @@ export const Login: React.FC = () => {
       <main className="relative z-10 w-full max-w-md my-auto flex flex-col max-h-[calc(100vh-1rem)]">
         <div
           className="bg-white rounded-lg shadow-2xl border border-slate-200/80 flex flex-col min-h-0 shrink-0"
-          style={{ boxShadow: '0 25px 50px -12px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.05) inset' }}
+          style={{
+            boxShadow: '0 25px 50px -12px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.05) inset',
+          }}
         >
           {/* En-tête compact */}
           <div
@@ -141,7 +147,10 @@ export const Login: React.FC = () => {
               )}
 
               <div>
-                <label htmlFor="login-username" className="block text-xs sm:text-sm font-semibold text-slate-700 mb-1">
+                <label
+                  htmlFor="login-username"
+                  className="block text-xs sm:text-sm font-semibold text-slate-700 mb-1"
+                >
                   Nom d'utilisateur
                 </label>
                 <div className="relative">
@@ -151,9 +160,9 @@ export const Login: React.FC = () => {
                     type="text"
                     value={username}
                     onChange={(e) => {
-                      setUsername(e.target.value);
-                      setTotpRequired(false);
-                      setTotpCode('');
+                      setUsername(e.target.value)
+                      setTotpRequired(false)
+                      setTotpCode('')
                     }}
                     className="w-full pl-8 sm:pl-10 pr-3 py-2 sm:py-2.5 text-sm sm:text-base border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#800020]/30 focus:ring-offset-0 focus:border-[#800020]"
                     placeholder="Nom d'utilisateur"
@@ -166,7 +175,10 @@ export const Login: React.FC = () => {
 
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label htmlFor="login-password" className="block text-xs sm:text-sm font-semibold text-slate-700">
+                  <label
+                    htmlFor="login-password"
+                    className="block text-xs sm:text-sm font-semibold text-slate-700"
+                  >
                     Mot de passe
                   </label>
                   <Link
@@ -184,9 +196,9 @@ export const Login: React.FC = () => {
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => {
-                      setPassword(e.target.value);
-                      setTotpRequired(false);
-                      setTotpCode('');
+                      setPassword(e.target.value)
+                      setTotpRequired(false)
+                      setTotpCode('')
                     }}
                     className="w-full pl-8 sm:pl-10 pr-10 py-2 sm:py-2.5 text-sm sm:text-base border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#800020]/30 focus:ring-offset-0 focus:border-[#800020]"
                     placeholder="Mot de passe"
@@ -199,16 +211,25 @@ export const Login: React.FC = () => {
                     onClick={() => setShowPassword((v) => !v)}
                     className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-100"
                     title={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
-                    aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                    aria-label={
+                      showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'
+                    }
                   >
-                    {showPassword ? <EyeOff className="w-4 h-4 sm:w-5 sm:h-5" /> : <Eye className="w-4 h-4 sm:w-5 sm:h-5" />}
+                    {showPassword ? (
+                      <EyeOff className="w-4 h-4 sm:w-5 sm:h-5" />
+                    ) : (
+                      <Eye className="w-4 h-4 sm:w-5 sm:h-5" />
+                    )}
                   </button>
                 </div>
               </div>
 
               {totpRequired && (
                 <div className="space-y-1">
-                  <label htmlFor="login-totp" className="block text-xs sm:text-sm font-semibold text-slate-700">
+                  <label
+                    htmlFor="login-totp"
+                    className="block text-xs sm:text-sm font-semibold text-slate-700"
+                  >
                     Code Authenticator
                   </label>
                   <div className="relative">
@@ -259,5 +280,5 @@ export const Login: React.FC = () => {
         </div>
       </main>
     </div>
-  );
+  )
 }

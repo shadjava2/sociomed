@@ -83,44 +83,54 @@
 		<band height="320">
 			<element kind="textField" uuid="17bee7d4-62bc-40cc-83e0-36fb3613f0d4" positionType="Float" x="0" y="0" width="539" height="320" markup="html" fontName="DejaVu Serif" fontSize="11.0" textAdjust="StretchHeight" blankWhenNull="true" hTextAlign="Justified" vTextAlign="Top">
 				<paragraph lineSpacing="Proportional" lineSpacingSize="1.35" spacingAfter="10"/>
-				<expression><![CDATA["<p>Par la présente, il est certifié que <b>"
-                    + ($P{nom} == null ? "" : $P{nom}) + " "
-                    + ($P{postnom} == null ? "" : $P{postnom}) + " "
-                    + ($P{prenom} == null ? "" : $P{prenom})
-                    + "</b>, de sexe <b>"
-                    + ($P{genre} == null ? "" : $P{genre})
-                    + "</b>, âgé(e) de <b>"
-                    + ($P{age} == null ? "" : $P{age})
-                    + "</b> ans, demeurant à <b>"
-                    + (($P{adresseMalade} == null || $P{adresseMalade}.trim().isEmpty()) ? "-" : $P{adresseMalade})
-                    + "</b>, et ayant pour qualité <b>"
-                    + ($P{qualiteMalade} == null ? "" : $P{qualiteMalade})
-                    + "</b>, bénéficie d'une prise en charge médicale.</p> <br/>"
+				<expression><![CDATA["<p><b>NOM &amp; POST-NOMS :</b> "
++ ($P{nom} == null ? "" : $P{nom}) + " "
++ ($P{postnom} == null ? "" : $P{postnom})
++ "</p>"
 
-                    + "<p>Dans ce cadre, l'intéressé(e) est orienté(e) vers l'établissement <b>"
-                    + ($P{etablissement} == null ? "" : $P{etablissement})
-                    + "</b>, afin d'y recevoir les soins et prestations nécessaires.</p><br/>"
++ "<p><b>PRENOM :</b> "
++ ($P{prenom} == null ? "" : $P{prenom})
++ "</p>"
 
-                    + "<p>La présente prise en charge est accordée pour le motif suivant : <b>"
-                    + (($P{motif} == null || $P{motif}.trim().isEmpty()) ? "-" : $P{motif}.replace("\r\n", "<br/>").replace("\n", "<br/>"))
-                    + "</b>.</p><br/>"
++ "<p><b>SEXE :</b> "
++ ($P{genre} == null ? "" : $P{genre})
++ "</p>"
 
-                    + "<p>Il est expressément précisé que l'ensemble des frais engagés dans le cadre de la présente prise en charge est supporté par le <b>Sénat de la République Démocratique du Congo</b>.</p><br/>"
++ "<p><b>AGE :</b> "
++ ($P{age} == null ? "" : $P{age})
++ "</p>"
 
-                    + "<p>La présente note demeure valable jusqu'au <b>"
-                    + (($P{dateExpiration} == null || $P{dateExpiration}.trim().isEmpty()) ? "-" : $P{dateExpiration})
-                    + "</b> inclus, sauf disposition contraire.</p><br/><br/><br/>"
++ "<p><b>ADRESSE DU MALADE :</b> "
++ (($P{adresseMalade} == null || $P{adresseMalade}.trim().isEmpty()) ? "-" : $P{adresseMalade})
++ "</p>"
 
-                    + "<p>Fait à Kinshasa, le <b>"
-                    + ($P{dateEmission} == null ? "" : $P{dateEmission})
-                    + "</b>.</p>"
++ "<p><b>QUALITE DU MALADE :</b> "
++ (($P{qualiteMalade} == null || $P{qualiteMalade}.trim().isEmpty()) ? "-" : $P{qualiteMalade})
++ "</p>"
 
-                    + "<br/><br/>"
++ "<p><b>EST ADRESSE A LA :</b> "
++ (($P{etablissement} == null || $P{etablissement}.trim().isEmpty()) ? "-" : $P{etablissement})
++ "</p>"
 
-                    + "<p><b>Le Médecin du Sénat</b><br/>"
-                    + "Émis par : <b>"
-                    + ($P{createdByFullname} == null ? "" : $P{createdByFullname})
-                    + "</b></p>"]]></expression>
++ "<p><b>MOTIF :</b><br/>"
++ (($P{motif} == null || $P{motif}.trim().isEmpty()) ? "-" : $P{motif}.replace("\r\n", "<br/>").replace("\n", "<br/>"))
++ "</p>"
+
++ "<br/>"
+
++ "<p>N.B : Les frais sont à charge du Sénat.</p>"
+
++ "<br/><br/>"
+
++ "<p align='right'>Fait à Kinshasa, le <b>"
++ ($P{dateEmission} == null ? "" : $P{dateEmission})
++ "</b>.</p>"
+
++ "<br/><br/>"
+
++ "<p align='right'><b>Le Médecin du Sénat</b><br/>"
++ ($P{createdByFullname} == null ? "" : $P{createdByFullname})
++ "</p>"]]></expression>
 			</element>
 		</band>
 	</detail>
